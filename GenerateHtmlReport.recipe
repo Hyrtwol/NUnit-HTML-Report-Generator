@@ -1,0 +1,14 @@
+﻿<Project DefaultTargets="Report" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="NUnitHtmlReportGenerator" AssemblyFile="NUnit HTML Report Generator\bin\Release\NUnitHTMLReportGenerator.exe" />
+  
+  <Target Name="Report">
+    <NUnitHtmlReportGenerator InputFileName="NUnitHtmlReportGenerator.Test\bin\Release\TestResult.xml"
+                              OutputFileName="TestResult.html"
+                              OverwriteOutput="True" />
+    <NUnitHtmlReportGenerator InputFileName="NUnit HTML Report Generator\ExampleResults.xml"
+                              OutputFileName="ExampleResults.html"
+                              OverwriteOutput="True" />
+  </Target>
+  
+</Project>
