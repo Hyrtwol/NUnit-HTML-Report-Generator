@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Clean;Build;Test" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Clean;Prepare;Build;Test" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <MajorVersion>1</MajorVersion>
@@ -9,7 +9,14 @@
     <SolutionFileName>NUnit HTML Report Generator.sln</SolutionFileName>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <BuildProperties>Configuration=$(Configuration);BuildVersion=$(BuildVersion)</BuildProperties>
+    <SolutionDir>$(MSBuildProjectDirectory)</SolutionDir>
   </PropertyGroup>
+
+  <ItemGroup>
+    <NuGetPackagesConfig Include="**\packages.config" />
+  </ItemGroup>
+  
+  <Import Project="$(MSBuildProjectDirectory)\.nuget\NuGet.targets" />
   
   <Target Name="Clean">
     <Message Text="Cleaning library" Importance="high"/>
@@ -19,6 +26,15 @@
     </ItemGroup>
     <Delete Files="@(FileToClean)" ContinueOnError="true" />
     <MSBuild Projects="$(SolutionFileName)" Targets="Clean" Properties="$(BuildProperties)" />
+  </Target>
+
+  <Target Name="Prepare" DependsOnTargets="CheckPrerequisites">
+    <Message Text="NuGetPackages: %(NuGetPackagesConfig.Identity)" Importance="high" />
+    <MakeDir Condition=" !Exists('$(PackagesDir)') " Directories="$(PackagesDir)" />
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="RestorePackages"
+             Properties="PackagesConfig=%(NuGetPackagesConfig.Identity);SolutionDir=$(SolutionDir)"
+             Condition=" '@(NuGetPackagesConfig)' != '' " />
   </Target>
 
   <Target Name="Build">
